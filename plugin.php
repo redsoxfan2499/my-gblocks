@@ -1,10 +1,10 @@
 <?php
 /**
- * Plugin Name: my-gblocks — CGB Gutenberg Block Plugin
- * Plugin URI: https://github.com/ahmadawais/create-guten-block/
- * Description: my-gblocks — is a Gutenberg plugin created via create-guten-block.
- * Author: mrahmadawais, maedahbatool
- * Author URI: https://AhmadAwais.com/
+ * Plugin Name: My G Blocks
+ * Plugin URI: https://github.com/redsoxfan2499/my-gblocks
+ * Description: WordPress plugin with different custom gutenberg blocks
+ * Author: Hyperdrive Designs
+ * Author URI: https://hyperdrivedesigns.com/
  * Version: 1.0.0
  * License: GPL2+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt

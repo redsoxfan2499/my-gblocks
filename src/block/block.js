@@ -9,11 +9,19 @@
 import './style.scss';
 import './editor.scss';
 
-const { __ } = wp.i18n; // Import __() from wp.i18n
-const { registerBlockType } = wp.blocks; // Import registerBlockType() from wp.blocks
-const { MediaUpload } =wp.editor;
+/**
+ * Internal block libraries
+ */
+const { __, setLocaleData } = wp.i18n;
+const {
+	registerBlockType
+} = wp.blocks;
+const {
+	RichText,
+	MediaUpload
+} = wp.editor;
 const { Button } = wp.components;
-const { InnerBlocks } = wp.editor; 
+
 
 /**
  * Register: aa Gutenberg Block.
@@ -30,25 +38,37 @@ const { InnerBlocks } = wp.editor;
  */
 registerBlockType( 'cgb/block-my-gblocks', {
 	// Block name. Block names must be string that contains a namespace prefix. Example: my-plugin/my-custom-block.
-	title: __( 'Paragraph Block' ), // Block title.
-	icon: 'shield', // Block icon from Dashicons → https://developer.wordpress.org/resource/dashicons/.
+	title: __( 'Image Cap Block' ), // Block title.
+	icon: 'images-alt2', // Block icon from Dashicons → https://developer.wordpress.org/resource/dashicons/.
 	category: 'common', // Block category — Group blocks together based on common traits E.g. common, formatting, layout widgets, embed.
 	keywords: [
-		__( 'Paragraph Block' ),
+		__( 'Image Cap Block' ),
 	],
 	attributes: {
+		title: {
+			type: 'array',
+			source: 'children',
+			selector: 'h2',
+		},
 		mediaID: {
 			type: 'number',
-		},
-		mediaAlt: {
-			type: 'string',
 		},
 		mediaURL: {
 			type: 'string',
 			source: 'attribute',
 			selector: 'img',
 			attribute: 'src',
-		}
+		},
+		ingredients: {
+			type: 'array',
+			source: 'children',
+			selector: '.ingredients',
+		},
+		instructions: {
+			type: 'array',
+			source: 'children',
+			selector: '.steps',
+		},
 	},
 
 	/**
@@ -59,35 +79,75 @@ registerBlockType( 'cgb/block-my-gblocks', {
 	 *
 	 * @link https://wordpress.org/gutenberg/handbook/block-api/block-edit-save/
 	 */
-	edit: function( props ) {
-		const { attributes } = props;
+	edit: function (props) {
+		const {
+			className,
+			attributes: {
+				title,
+				mediaID,
+				mediaURL,
+				ingredients,
+				instructions,
+			},
+			setAttributes,
+		} = props;
 		
-		const onSelectImage = media => {
-			console.log(media);
-
-			props.setAttributes({
-				mediaURL: media.sizes.thumbnail.url,
-				mediaID: media.id,
-				mediaAlt: media.alt
-			});
+		const onChangeTitle = ( value ) => {
+			setAttributes( { title: value } );
 		};
+
+		const onSelectImage = ( media ) => {
+			setAttributes( {
+				mediaURL: media.url,
+				mediaID: media.id,
+			} );
+		};
+		const onChangeIngredients = ( value ) => {
+			setAttributes( { ingredients: value } );
+		};
+
+		const onChangeInstructions = ( value ) => {
+			setAttributes( { instructions: value } );
+		};
+
 		return (
-			<div className={ props.className }>
-				<div>
-					<MediaUpload 
-					onSelect={onSelectImage}
-					type="image"
-					value={attributes.mediaID}
-					render={({ open }) => (
-						<Button className = { attributes.mediaID ? 'image-button' : 'btn btn-sm'} onClick = { open }>
-							{!attributes.mediaID ? __('Upload Image') : <img src={attributes.mediaURL} />}
-						</Button>
-					)}
+			<div className={ className }>
+				<RichText
+					tagName="h2"
+					placeholder={ __( 'Write Recipe title…', 'gutenberg-examples' ) }
+					value={ title }
+					onChange={ onChangeTitle }
+				/>
+				<div className="recipe-image">
+					<MediaUpload
+						onSelect={ onSelectImage }
+						type="image"
+						value={ mediaID }
+						render={ ( { open } ) => (
+							<Button className={ mediaID ? 'image-button' : 'button button-large' } onClick={ open }>
+								{ ! mediaID ? __( 'Upload Image', 'gutenberg-examples' ) : <img src={ mediaURL } alt={ __( 'Upload Recipe Image', 'gutenberg-examples' ) } /> }
+							</Button>
+						) }
 					/>
 				</div>
-				<div>
-					<InnerBLocks />
-				</div>
+				<h3>{ __( 'Ingredients', 'gutenberg-examples' ) }</h3>
+				<RichText
+					tagName="ul"
+					multiline="li"
+					placeholder={ __( 'Write a list of ingredients…', 'gutenberg-examples' ) }
+					value={ ingredients }
+					onChange={ onChangeIngredients }
+					className="ingredients"
+				/>
+				<h3>{ __( 'Instructions', 'gutenberg-examples' ) }</h3>
+				<RichText
+					tagName="div"
+					multiline="p"
+					className="steps"
+					placeholder={ __( 'Write the instructions…', 'gutenberg-examples' ) }
+					value={ instructions }
+					onChange={ onChangeInstructions }
+				/>
 			</div>
 		);
 	},
@@ -101,16 +161,28 @@ registerBlockType( 'cgb/block-my-gblocks', {
 	 * @link https://wordpress.org/gutenberg/handbook/block-api/block-edit-save/
 	 */
 	save: function( props ) {
+		const {
+			className,
+			attributes: {
+				title,
+				mediaURL,
+				ingredients,
+				instructions,
+			},
+		} = props;
 		return (
-			<div>
-				<figure className="p-block">
-					<div>
-						<im src = { props.attributes.mediaURL } alt = { props.attributes.mediaAlt } />
-					</div>
-					<figcaption class="p-block-cap">
-						<InnerBLocks.Content />
-					</figcaption>
-				</figure>
+			<div className={ className }>
+				<RichText.Content tagName="h2" value={ title } />
+
+				{
+					mediaURL && (
+						<img className="recipe-image" src={ mediaURL } alt={ __( 'Recipe Image', 'gutenberg-examples' ) } />
+					)
+				}
+
+				<RichText.Content tagName="h2" className="ingredients" value={ ingredients } />
+
+				<RichText.Content tagName="div" className="steps" value={ instructions } />
 			</div>
 		);
 	},
