@@ -36,13 +36,13 @@ const { Button } = wp.components;
  * @return {?WPBlock}          The block, if it has been successfully
  *                             registered; otherwise `undefined`.
  */
-registerBlockType( 'cgb/block-my-gblocks', {
+registerBlockType('cgb/block-my-gblocks', {
 	// Block name. Block names must be string that contains a namespace prefix. Example: my-plugin/my-custom-block.
-	title: __( 'Image Cap Block' ), // Block title.
-	icon: 'images-alt2', // Block icon from Dashicons → https://developer.wordpress.org/resource/dashicons/.
+	title: __('To Do Card Block'), // Block title.
+	icon: 'list-view', // Block icon from Dashicons → https://developer.wordpress.org/resource/dashicons/.
 	category: 'common', // Block category — Group blocks together based on common traits E.g. common, formatting, layout widgets, embed.
 	keywords: [
-		__( 'Image Cap Block' ),
+		__('To Do Card Block'),
 	],
 	attributes: {
 		title: {
@@ -91,62 +91,62 @@ registerBlockType( 'cgb/block-my-gblocks', {
 			},
 			setAttributes,
 		} = props;
-		
-		const onChangeTitle = ( value ) => {
-			setAttributes( { title: value } );
+
+		const onChangeTitle = (value) => {
+			setAttributes({ title: value });
 		};
 
-		const onSelectImage = ( media ) => {
-			setAttributes( {
+		const onSelectImage = (media) => {
+			setAttributes({
 				mediaURL: media.url,
 				mediaID: media.id,
-			} );
+			});
 		};
-		const onChangeIngredients = ( value ) => {
-			setAttributes( { ingredients: value } );
+		const onChangeIngredients = (value) => {
+			setAttributes({ ingredients: value });
 		};
 
-		const onChangeInstructions = ( value ) => {
-			setAttributes( { instructions: value } );
+		const onChangeInstructions = (value) => {
+			setAttributes({ instructions: value });
 		};
 
 		return (
-			<div className={ className }>
+			<div className={className}>
 				<RichText
 					tagName="h2"
-					placeholder={ __( 'Write Recipe title…', 'gutenberg-examples' ) }
-					value={ title }
-					onChange={ onChangeTitle }
+					placeholder={__('Task Title')}
+					value={title}
+					onChange={onChangeTitle}
 				/>
 				<div className="recipe-image">
 					<MediaUpload
-						onSelect={ onSelectImage }
+						onSelect={onSelectImage}
 						type="image"
-						value={ mediaID }
-						render={ ( { open } ) => (
-							<Button className={ mediaID ? 'image-button' : 'button button-large' } onClick={ open }>
-								{ ! mediaID ? __( 'Upload Image', 'gutenberg-examples' ) : <img src={ mediaURL } alt={ __( 'Upload Recipe Image', 'gutenberg-examples' ) } /> }
+						value={mediaID}
+						render={({ open }) => (
+							<Button className={mediaID ? 'image-button' : 'button button-large'} onClick={open}>
+								{!mediaID ? __('Upload Image') : <img src={mediaURL} alt={__('Upload Recipe Image')} />}
 							</Button>
-						) }
+						)}
 					/>
 				</div>
-				<h3>{ __( 'Ingredients', 'gutenberg-examples' ) }</h3>
+				<h3>{__('Sub Tasks')}</h3>
 				<RichText
 					tagName="ul"
 					multiline="li"
-					placeholder={ __( 'Write a list of ingredients…', 'gutenberg-examples' ) }
-					value={ ingredients }
-					onChange={ onChangeIngredients }
+					placeholder={__('Creat sub tasks')}
+					value={ingredients}
+					onChange={onChangeIngredients}
 					className="ingredients"
 				/>
-				<h3>{ __( 'Instructions', 'gutenberg-examples' ) }</h3>
+				<h3>{__('Main Task')}</h3>
 				<RichText
 					tagName="div"
 					multiline="p"
 					className="steps"
-					placeholder={ __( 'Write the instructions…', 'gutenberg-examples' ) }
-					value={ instructions }
-					onChange={ onChangeInstructions }
+					placeholder={__('Create main task')}
+					value={instructions}
+					onChange={onChangeInstructions}
 				/>
 			</div>
 		);
@@ -160,7 +160,7 @@ registerBlockType( 'cgb/block-my-gblocks', {
 	 *
 	 * @link https://wordpress.org/gutenberg/handbook/block-api/block-edit-save/
 	 */
-	save: function( props ) {
+	save: function (props) {
 		const {
 			className,
 			attributes: {
@@ -171,19 +171,19 @@ registerBlockType( 'cgb/block-my-gblocks', {
 			},
 		} = props;
 		return (
-			<div className={ className }>
-				<RichText.Content tagName="h2" value={ title } />
+			<div className={className}>
+				<RichText.Content tagName="h2" value={title} />
 
 				{
 					mediaURL && (
-						<img className="recipe-image" src={ mediaURL } alt={ __( 'Recipe Image', 'gutenberg-examples' ) } />
+						<img className="recipe-image" src={mediaURL} alt={__('Recipe Image')} />
 					)
 				}
 
-				<RichText.Content tagName="h2" className="ingredients" value={ ingredients } />
+				<RichText.Content tagName="h2" className="ingredients" value={ingredients} />
 
-				<RichText.Content tagName="div" className="steps" value={ instructions } />
+				<RichText.Content tagName="div" className="steps" value={instructions} />
 			</div>
 		);
 	},
-} );
+});
